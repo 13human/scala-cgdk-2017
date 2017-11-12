@@ -16,6 +16,7 @@ public class Move {
     private double x;
     private double y;
     private double angle;
+    private double factor;
 
     private double maxSpeed;
     private double maxAngularSpeed;
@@ -23,6 +24,7 @@ public class Move {
     private VehicleType vehicleType;
 
     private long facilityId = -1L;
+    private long vehicleId = -1L;
 
     /**
      * @return Возвращает текущее действие игрока.
@@ -158,10 +160,18 @@ public class Move {
      * Является обязательным параметром для действия {@code ActionType.ROTATE} и задаёт абсциссу точки, относительно
      * которой необходимо совершить поворот.
      * <p>
+     * Является обязательным параметром для действия {@code ActionType.SCALE} и задаёт абсциссу точки, относительно
+     * которой необходимо совершить масштабирование.
+     * <p>
+     * Является обязательным параметром для действия {@code ActionType.TACTICAL_NUCLEAR_STRIKE} и задаёт абсциссу цели
+     * тактического ядерного удара.
+     * <p>
      * Корректными значениями для действия {@code ActionType.MOVE} являются вещественные числа от
-     * {@code -game.worldWidth} до {@code game.worldWidth} включительно. Корректными значениями для действия
-     * {@code ActionType.ROTATE} являются вещественные числа от {@code -game.worldWidth} до
-     * {@code 2.0 * game.worldWidth} включительно.
+     * {@code -game.worldWidth} до {@code game.worldWidth} включительно. Корректными значениями для действий
+     * {@code ActionType.ROTATE} и {@code ActionType.SCALE} являются вещественные числа от {@code -game.worldWidth} до
+     * {@code 2.0 * game.worldWidth} включительно. Корректными значениями для действия
+     * {@code ActionType.TACTICAL_NUCLEAR_STRIKE} являются вещественные числа от {@code 0.0} до {@code game.worldWidth}
+     * включительно.
      */
     public void setX(double x) {
         this.x = x;
@@ -183,10 +193,18 @@ public class Move {
      * Является обязательным параметром для действия {@code ActionType.ROTATE} и задаёт ординату точки, относительно
      * которой необходимо совершить поворот.
      * <p>
+     * Является обязательным параметром для действия {@code ActionType.SCALE} и задаёт ординату точки, относительно
+     * которой необходимо совершить масштабирование.
+     * <p>
+     * Является обязательным параметром для действия {@code ActionType.TACTICAL_NUCLEAR_STRIKE} и задаёт ординату цели
+     * тактического ядерного удара.
+     * <p>
      * Корректными значениями для действия {@code ActionType.MOVE} являются вещественные числа от
-     * {@code -game.worldHeight} до {@code game.worldHeight} включительно. Корректными значениями для действия
-     * {@code ActionType.ROTATE} являются вещественные числа от {@code -game.worldHeight} до
-     * {@code 2.0 * game.worldHeight} включительно.
+     * {@code -game.worldHeight} до {@code game.worldHeight} включительно. Корректными значениями для действий
+     * {@code ActionType.ROTATE} и {@code ActionType.SCALE} являются вещественные числа от {@code -game.worldHeight} до
+     * {@code 2.0 * game.worldHeight} включительно. Корректными значениями для действия
+     * {@code ActionType.TACTICAL_NUCLEAR_STRIKE} являются вещественные числа от {@code 0.0} до {@code game.worldHeight}
+     * включительно.
      */
     public void setY(double y) {
         this.y = y;
@@ -212,6 +230,26 @@ public class Move {
     }
 
     /**
+     * @return Возвращает текущий коэффициент масштабирования.
+     */
+    public double getFactor() {
+        return factor;
+    }
+
+    /**
+     * Задаёт коэффициент масштабирования.
+     * <p>
+     * Является обязательным параметром для действия {@code ActionType.SCALE} и задаёт коэффициент масштабирования
+     * формации юнитов относительно точки ({@code x}, {@code y}). При значениях коэффициента больше 1.0 происходит
+     * расширение формации, при значениях меньше 1.0 --- сжатие.
+     * <p>
+     * Корректными значениями являются вещественные числа от {@code 0.1} до {@code 10.0} включительно.
+     */
+    public void setFactor(double factor) {
+        this.factor = factor;
+    }
+
+    /**
      * @return Возвращает текущее ограничение линейной скорости.
      */
     public double getMaxSpeed() {
@@ -221,9 +259,9 @@ public class Move {
     /**
      * Устанавливает абсолютное ограничение линейной скорости.
      * <p>
-     * Является опциональным параметром для действий {@code ActionType.MOVE} и {@code ActionType.ROTATE}. Если для
-     * действия {@code ActionType.ROTATE} установлено ограничение скорости поворота, то этот параметр будет
-     * проигнорирован.
+     * Является опциональным параметром для действий {@code ActionType.MOVE}, {@code ActionType.ROTATE} и
+     * {@code ActionType.SCALE}. Если для действия {@code ActionType.ROTATE} установлено ограничение скорости поворота,
+     * то этот параметр будет проигнорирован.
      * <p>
      * Корректными значениями являются вещественные неотрицательные числа. При этом, {@code 0.0} означает, что
      * ограничение отсутствует.
@@ -291,5 +329,23 @@ public class Move {
      */
     public void setFacilityId(long facilityId) {
         this.facilityId = facilityId;
+    }
+
+    /**
+     * @return Возвращает текущий идентификатор техники.
+     */
+    public long getVehicleId() {
+        return vehicleId;
+    }
+
+    /**
+     * Устанавливает идентификатор техники.
+     * <p>
+     * Является обязательным параметром для действия {@code ActionType.TACTICAL_NUCLEAR_STRIKE}. Если юнит с данным
+     * идентификатором отсутствует в игре, принадлежит другому игроку или цель удара находится вне зоны видимости этого
+     * юнита, то действие будет проигнорировано.
+     */
+    public void setVehicleId(long vehicleId) {
+        this.vehicleId = vehicleId;
     }
 }

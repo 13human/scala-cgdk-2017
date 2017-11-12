@@ -51,7 +51,7 @@ public final class RemoteProcessClient implements Closeable {
 
     public void writeProtocolVersionMessage() throws IOException {
         writeEnum(MessageType.PROTOCOL_VERSION);
-        writeInt(1);
+        writeInt(3);
         flush();
     }
 
@@ -78,7 +78,7 @@ public final class RemoteProcessClient implements Closeable {
                 readDouble(), readInt(), readDouble(), readDouble(), readDouble(), readDouble(), readInt(), readInt(),
                 readInt(), readInt(), readInt(), readInt(), readInt(), readDouble(), readDouble(), readDouble(),
                 readDouble(), readInt(), readInt(), readInt(), readInt(), readInt(), readInt(), readDouble(),
-                readDouble(), readDouble(), readDouble()
+                readDouble(), readDouble(), readDouble(), readInt(), readInt(), readDouble(), readDouble(), readInt()
         );
     }
 
@@ -109,10 +109,12 @@ public final class RemoteProcessClient implements Closeable {
             writeDouble(move.getX());
             writeDouble(move.getY());
             writeDouble(move.getAngle());
+            writeDouble(move.getFactor());
             writeDouble(move.getMaxSpeed());
             writeDouble(move.getMaxAngularSpeed());
             writeEnum(move.getVehicleType());
             writeLong(move.getFacilityId());
+            writeLong(move.getVehicleId());
         }
 
         flush();
@@ -152,7 +154,10 @@ public final class RemoteProcessClient implements Closeable {
             return previousPlayerById.get(readLong());
         }
 
-        Player player = new Player(readLong(), readBoolean(), readBoolean(), readInt(), readInt());
+        Player player = new Player(
+                readLong(), readBoolean(), readBoolean(), readInt(), readInt(), readInt(), readLong(), readInt(),
+                readDouble(), readDouble()
+        );
         previousPlayerById.put(player.getId(), player);
         return player;
     }
